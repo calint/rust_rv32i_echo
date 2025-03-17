@@ -5,26 +5,19 @@ use core::arch::global_asm;
 use core::panic::PanicInfo;
 use core::ptr::{read_volatile, write_volatile};
 
+mod constants; // Declare the constants module
+use constants::*; // Bring constants into scope
+
 // Hardware register definitions
 #[inline(always)]
 unsafe fn uart_out() -> *mut i32 {
-    0xffff_fff8 as *mut i32
+    UART_OUT_ADDR as *mut i32
 }
 
 #[inline(always)]
 unsafe fn uart_in() -> *mut i32 {
-    0xffff_fff4 as *mut i32
+    UART_IN_ADDR as *mut i32
 }
-
-// Assembly startup code
-global_asm!(
-    r#"
-    .global _start
-    _start:
-        li sp, 0x200000
-        j run
-"#
-);
 
 fn uart_read_blocking() -> i8 {
     loop {
@@ -44,6 +37,8 @@ fn uart_write_blocking(ch: i8) {
         write_volatile(uart_out(), ch as i32);
     }
 }
+
+global_asm!(include_str!("startup.s"));
 
 // Entry point after stack setup
 #[no_mangle]
