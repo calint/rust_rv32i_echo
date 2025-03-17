@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "rv32i_uart_echo"
-path = "src/main.rs"     # Specify the path to your main.rs file
+path = "src/main.rs"
 
 [profile.dev]
 panic = "abort"
@@ -22,4 +22,3 @@ strip = true      # Strip symbols from binary
 
 [features]
 default = []
-# Enable the 'global_asm' nightly feature
