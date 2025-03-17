@@ -42,13 +42,15 @@ pub unsafe extern "C" fn run() -> ! {
         let input = read_volatile(uart_in());
 
         // If we have a character (not -1)
-        if input != -1 {
-            // Wait until UART output is ready (not -1)
-            while read_volatile(uart_out()) != -1 {}
-
-            // Now UART is ready, send the character
-            write_volatile(uart_out(), input);
+        if input == -1 {
+            continue;
         }
+
+        // Wait until UART output is ready (not -1)
+        while read_volatile(uart_out()) != -1 {}
+
+        // Now UART is ready, send the character
+        write_volatile(uart_out(), input);
     }
 }
 

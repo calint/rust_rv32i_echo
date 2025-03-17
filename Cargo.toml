@@ -21,4 +21,4 @@ strip = true      # Strip symbols from binary
 # No dependencies!
 
 [features]
-default = []
+# No default features
