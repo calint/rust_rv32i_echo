@@ -1,0 +1,25 @@
+[package]
+name = "rv32i_uart_echo"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "rv32i_uart_echo"
+path = "src/main.rs"     # Specify the path to your main.rs file
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+opt-level = "z"   # Optimize for size
+lto = true        # Enable Link Time Optimization
+codegen-units = 1 # Use only one codegen unit to further optimize for size
+strip = true      # Strip symbols from binary
+
+[dependencies]
+# No dependencies!
+
+[features]
+default = []
+# Enable the 'global_asm' nightly feature
