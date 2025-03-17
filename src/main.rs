@@ -28,16 +28,16 @@ fn uart_send_char(ch: u8) {
     }
 }
 
-fn uart_send_cstr(cstr: *const u8) {
-    unsafe {
-        let mut ptr = cstr;
-        while *ptr != 0 {
-            while read_volatile(UART_OUT_ADDR as *const i32) != -1 {}
-            write_volatile(UART_OUT_ADDR as *mut i32, *ptr as i32);
-            ptr = ptr.offset(1);
-        }
-    }
-}
+// fn uart_send_cstr(cstr: *const u8) {
+//     unsafe {
+//         let mut ptr = cstr;
+//         while *ptr != 0 {
+//             while read_volatile(UART_OUT_ADDR as *const i32) != -1 {}
+//             write_volatile(UART_OUT_ADDR as *mut i32, *ptr as i32);
+//             ptr = ptr.offset(1);
+//         }
+//     }
+// }
 
 fn uart_send_str(str: &[u8]) {
     unsafe {
