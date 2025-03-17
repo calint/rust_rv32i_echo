@@ -16,11 +16,6 @@ unsafe fn uart_in() -> *mut i32 {
     0xffff_fff4 as *mut i32
 }
 
-#[inline(always)]
-unsafe fn led() -> *mut u32 {
-    0xffff_fffc as *mut u32
-}
-
 // Assembly startup code
 global_asm!(
     r#"
@@ -31,40 +26,37 @@ global_asm!(
 "#
 );
 
+fn uart_read_blocking() -> i8 {
+    loop {
+        unsafe {
+            let input = read_volatile(uart_in());
+            if input == -1 {
+                continue;
+            }
+            return input as i8;
+        }
+    }
+}
+
+fn uart_write_blocking(ch: i8) {
+    unsafe {
+        while read_volatile(uart_out()) != -1 {}
+        write_volatile(uart_out(), ch as i32);
+    }
+}
+
 // Entry point after stack setup
 #[no_mangle]
-pub unsafe extern "C" fn run() -> ! {
-    // Initialize - turn LED on to show we're running
-    *led() = 0;
-
+pub extern "C" fn run() -> ! {
     loop {
-        // Check for UART input
-        let input = read_volatile(uart_in());
-
-        // If we have a character (not -1)
-        if input == -1 {
-            continue;
-        }
-
-        // Wait until UART output is ready (not -1)
-        while read_volatile(uart_out()) != -1 {}
-
-        // Now UART is ready, send the character
-        write_volatile(uart_out(), input);
+        uart_write_blocking(uart_read_blocking());
     }
 }
 
 // This function is called on panic
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
-    unsafe {
-        // Flash LED rapidly to indicate panic
-        let mut i = 0;
-        loop {
-            *led() = i & 1;
-            i = i.wrapping_add(1);
-        }
-    }
+    loop {}
 }
 
 // We need to provide these language items for `no_std`
