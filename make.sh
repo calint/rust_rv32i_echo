@@ -9,6 +9,7 @@ OBJDUMP=riscv64-elf-objdump
 cargo build --release
 
 $OBJCOPY $BIN -O binary firmware.bin
+#$OBJDUMP -Mnumeric,no-aliases --source-comment -Sr $BIN > firmware.lst
 $OBJDUMP --source-comment -Sr $BIN > firmware.lst
 $OBJDUMP -s --section=.rodata --section=.srodata --section=.data --section=.sdata --section=.bss --section=.sbss $BIN > firmware.dat || true
 
