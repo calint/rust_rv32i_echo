@@ -5,13 +5,13 @@ use core::arch::global_asm;
 use core::panic::PanicInfo;
 use core::ptr::{read_volatile, write_volatile};
 
-mod constants;
-use constants::*;
+mod constants; // FPGA addresses
 
+// API
 fn uart_read_char() -> i8 {
     loop {
         unsafe {
-            let input = read_volatile(UART_IN_ADDR as *const i32);
+            let input = read_volatile(constants::UART_IN_ADDR as *const i32);
             if input == -1 {
                 continue;
             }
@@ -22,14 +22,14 @@ fn uart_read_char() -> i8 {
 
 fn uart_send_char(ch: i8) {
     unsafe {
-        while read_volatile(UART_OUT_ADDR as *const i32) != -1 {}
-        write_volatile(UART_OUT_ADDR as *mut i32, ch as i32);
+        while read_volatile(constants::UART_OUT_ADDR as *const i32) != -1 {}
+        write_volatile(constants::UART_OUT_ADDR as *mut i32, ch as i32);
     }
 }
 
+// setup stack and jump to 'run()'
 global_asm!(include_str!("startup.s"));
 
-// Entry point after 'startup.s'
 #[no_mangle]
 pub extern "C" fn run() -> ! {
     loop {
@@ -37,14 +37,7 @@ pub extern "C" fn run() -> ! {
     }
 }
 
-// This function is called on panic
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
-    loop {}
-}
-
-// We need to provide these language items for `no_std`
-#[no_mangle]
-pub extern "C" fn abort() -> ! {
     loop {}
 }
