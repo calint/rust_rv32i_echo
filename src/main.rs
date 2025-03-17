@@ -9,6 +9,7 @@ mod constants; // FPGA addresses
 use constants::*;
 
 // API
+#[inline(always)]
 fn uart_read_char() -> u8 {
     loop {
         unsafe {
@@ -21,6 +22,7 @@ fn uart_read_char() -> u8 {
     }
 }
 
+#[inline(always)]
 fn uart_send_char(ch: u8) {
     unsafe {
         while read_volatile(UART_OUT_ADDR as *const i32) != -1 {}
@@ -28,6 +30,7 @@ fn uart_send_char(ch: u8) {
     }
 }
 
+// #[inline(always)]
 // fn uart_send_cstr(cstr: *const u8) {
 //     unsafe {
 //         let mut ptr = cstr;
@@ -39,12 +42,10 @@ fn uart_send_char(ch: u8) {
 //     }
 // }
 
+#[inline(always)]
 fn uart_send_str(str: &[u8]) {
-    unsafe {
-        for &byte in str {
-            while read_volatile(UART_OUT_ADDR as *const i32) != -1 {}
-            write_volatile(UART_OUT_ADDR as *mut i32, byte as i32);
-        }
+    for &byte in str {
+        uart_send_char(byte);
     }
 }
 
