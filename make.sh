@@ -13,5 +13,8 @@ $OBJDUMP --source-comment -Sr $BIN > firmware.lst
 $OBJDUMP -s --section=.rodata --section=.srodata --section=.data --section=.sdata --section=.bss --section=.sbss $BIN > firmware.dat || true
 
 # run
+echo " * build emulator"
+emulator/make.sh
+
 echo " * run emulator"
 emulator/osqa firmware.bin sdcard.bin
