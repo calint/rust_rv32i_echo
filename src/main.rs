@@ -8,19 +8,19 @@ use core::ptr::{read_volatile, write_volatile};
 mod constants; // FPGA addresses
 
 // API
-fn uart_read_char() -> i8 {
+fn uart_read_char() -> u8 {
     loop {
         unsafe {
             let input = read_volatile(constants::UART_IN_ADDR as *const i32);
             if input == -1 {
                 continue;
             }
-            return input as i8;
+            return input as u8;
         }
     }
 }
 
-fn uart_send_char(ch: i8) {
+fn uart_send_char(ch: u8) {
     unsafe {
         while read_volatile(constants::UART_OUT_ADDR as *const i32) != -1 {}
         write_volatile(constants::UART_OUT_ADDR as *mut i32, ch as i32);
